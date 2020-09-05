@@ -50,6 +50,7 @@ export class MyUserService implements UserService<User, Credentials> {
       [securityId]: user.id,
       id: user.id,
       role: user.role,
+      anime:'kokok'
     };
   }
 }
