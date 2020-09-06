@@ -5,7 +5,7 @@ export class Contacts extends Entity {
   @property({
     type: 'string',
     id: true,
-    generated: true,
+    generated: false,
     defaultFn: 'uuid',
   })
   id?: string;
@@ -15,6 +15,12 @@ export class Contacts extends Entity {
     required: true,
   })
   firstName: string;
+
+  @property({
+    type: 'string',
+    required: false,
+  })
+  type: string;
 
   @property({
     type: 'string',
@@ -60,7 +66,7 @@ export class Contacts extends Entity {
   @property({
     type: 'string',
   })
-  caseId?: string;
+  casesId?: string;
 
   @property({
     type: 'date',

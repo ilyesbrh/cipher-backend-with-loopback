@@ -4,10 +4,7 @@ import _ from 'lodash';
 
 // Instance level authorizer
 // Can be also registered as an authorizer, depends on users' need.
-export async function basicAuthorization(
-  authorizationCtx: AuthorizationContext,
-  metadata: AuthorizationMetadata,
-): Promise<AuthorizationDecision> {
+export async function basicAuthorization(authorizationCtx: AuthorizationContext, metadata: AuthorizationMetadata): Promise<AuthorizationDecision> {
   // No access if authorization details are missing
   let currentUser: UserProfile;
 
@@ -37,6 +34,14 @@ export async function basicAuthorization(
   if (metadata.allowedRoles!.includes(currentUser.role)) {
     roleIsAllowed = true;
   }
+
+  currentUser.role.split(',').forEach((r: string) => {
+
+    if (metadata.allowedRoles!.includes(r)) {
+      roleIsAllowed = true;
+    }
+  });
+
 
   if (!roleIsAllowed) {
     return AuthorizationDecision.DENY;

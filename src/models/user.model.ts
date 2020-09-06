@@ -32,7 +32,8 @@ export class User extends Entity {
 
   @property({
     type: 'string',
-    nullable: false,
+    required: true,
+    nullable: false
   })
   role: string;
 

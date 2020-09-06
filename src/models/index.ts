@@ -6,3 +6,4 @@ export * from './tasks.model';
 export * from './attachments.model';
 export * from './contacts.model';
 export * from './fees.model';
+export * from './timelines.model';

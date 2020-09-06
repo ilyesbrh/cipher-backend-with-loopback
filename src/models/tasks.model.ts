@@ -5,7 +5,7 @@ export class Tasks extends Entity {
   @property({
     type: 'string',
     id: true,
-    generated: true,
+    generated: false,
     defaultFn: 'uuid'
   })
   id?: string;
@@ -41,11 +41,6 @@ export class Tasks extends Entity {
   deadline: string;
 
   @property({
-    type: 'string',
-  })
-  CaseId?: string;
-
-  @property({
     type: 'date',
     default: () => new Date()
   })
@@ -57,6 +52,10 @@ export class Tasks extends Entity {
   })
   updatedAt?: string;
 
+  @property({
+    type: 'string',
+  })
+  casesId?: string;
 
   constructor(data?: Partial<Tasks>) {
     super(data);

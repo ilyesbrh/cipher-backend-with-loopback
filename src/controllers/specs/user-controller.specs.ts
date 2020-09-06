@@ -1,3 +1,14 @@
+export enum Roles {
+  CASE_CREATE = 'create case',
+  CASE_VIEW = 'view case',
+  FEES_CREATE = 'create fees',
+  FEES_RECEIVED = 'received fees',
+  FEES_VIEW = 'view fees',
+  BOARD_VIEW = 'view board',
+  STATS_VIEW = 'view fees stats',
+  ADMIN = "admin",
+}
+
 export const UserProfileSchema = {
   type: 'object',
   required: ['id'],
@@ -20,6 +31,9 @@ const CredentialsSchema = {
       type: 'string',
       minLength: 8,
     },
+    role: {
+      type: "string"
+    }
   },
 };
 

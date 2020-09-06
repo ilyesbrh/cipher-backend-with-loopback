@@ -10,7 +10,7 @@ import {basicAuthorization} from '../middlewares/auth.midd';
 import {User} from '../models';
 import {Credentials, UserRepository} from '../repositories';
 import {PasswordHasher, validateCredentials} from '../services';
-import {CredentialsRequestBody, UserProfileSchema} from './specs/user-controller.specs';
+import {CredentialsRequestBody, Roles, UserProfileSchema} from './specs/user-controller.specs';
 
 
 @model()
@@ -33,6 +33,13 @@ export class AdminController {
   ) {
   }
 
+  @authenticate('jwt')
+  @authorize(
+    {
+      allowedRoles: [Roles.ADMIN],
+      voters: [basicAuthorization],
+    }
+  )
   @post('/users/sign-up', {
     responses: {
       '200': {
@@ -47,11 +54,14 @@ export class AdminController {
       },
     },
   })
-  async create(
-    @requestBody(CredentialsRequestBody)
-    newUserRequest: Credentials,
-  ): Promise<User> {
-    newUserRequest.role = 'user';
+  async create(@requestBody(CredentialsRequestBody) newUserRequest: Credentials): Promise<User> {
+
+
+    const isRolesValidated = this.validateRoles(newUserRequest.role?.split(','));
+
+    if (!isRolesValidated) {
+      throw new HttpErrors.BadRequest('bad roles');
+    }
 
     // ensure a valid email value and password value
     validateCredentials(_.pick(newUserRequest, ['email', 'password']));
@@ -81,6 +91,28 @@ export class AdminController {
         throw error;
       }
     }
+  }
+
+  validateRoles(roles: string[] | undefined): boolean {
+
+    console.log(roles);
+
+    if (!roles) return false;
+
+    let count = 0;
+
+    roles.forEach(v => {
+
+      if ((Object.values(Roles) as string[]).includes(v) && v !== 'admin') {
+        count++;
+      }
+
+    });
+
+    console.log(count);
+    console.log(roles.length);
+
+    return count === roles.length;
   }
 
   @post('/users/sign-up/admin', {

@@ -5,7 +5,7 @@ export class Fees extends Entity {
   @property({
     type: 'string',
     id: true,
-    generated: true,
+    generated: false,
     defaultFn: 'uuid',
   })
   id?: string;
@@ -20,14 +20,7 @@ export class Fees extends Entity {
     type: 'boolean',
     default: false,
   })
-  isRecieved?: boolean;
-
-
-  @property({
-    type: 'string',
-    required: true,
-  })
-  client: string;
+  isReceived?: boolean;
 
   @property({
     type: 'date',
@@ -41,6 +34,10 @@ export class Fees extends Entity {
   })
   updatedAt?: string;
 
+  @property({
+    type: 'string',
+  })
+  casesId?: string;
 
   constructor(data?: Partial<Fees>) {
     super(data);

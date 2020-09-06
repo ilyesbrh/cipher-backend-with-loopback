@@ -1,11 +1,16 @@
-import {Entity, model, property} from '@loopback/repository';
+import {Entity, model, property, hasOne, hasMany} from '@loopback/repository';
+import {Contacts} from './contacts.model';
+import {Fees} from './fees.model';
+import {Tasks} from './tasks.model';
+import {Attachments} from './attachments.model';
+import {Timelines} from './timelines.model';
 
 @model()
 export class Cases extends Entity {
   @property({
     type: 'string',
     id: true,
-    generated: true,
+    generated: false,
     defaultFn: 'uuid',
   })
   id?: string;
@@ -20,12 +25,6 @@ export class Cases extends Entity {
     type: 'string',
   })
   description?: string;
-
-  @property({
-    type: 'string',
-    required: true,
-  })
-  client: string;
 
   @property({
     type: 'string',
@@ -85,6 +84,20 @@ export class Cases extends Entity {
   })
   updatedAt?: string;
 
+  @hasOne(() => Contacts)
+  contacts: Contacts;
+
+  @hasMany(() => Fees)
+  fees: Fees[];
+
+  @hasMany(() => Tasks)
+  tasks: Tasks[];
+
+  @hasMany(() => Attachments)
+  attachments: Attachments[];
+
+  @hasMany(() => Timelines)
+  timelines: Timelines[];
 
   constructor(data?: Partial<Cases>) {
     super(data);

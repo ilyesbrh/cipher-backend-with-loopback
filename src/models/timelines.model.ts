@@ -1,20 +1,21 @@
 import {Entity, model, property} from '@loopback/repository';
 
 @model()
-export class Attachments extends Entity {
+export class Timelines extends Entity {
+
   @property({
     type: 'string',
     id: true,
     generated: false,
     defaultFn: 'uuid',
   })
-  id?: string;
+  id: string;
 
   @property({
     type: 'string',
     required: true,
   })
-  name: string;
+  title: string;
 
   @property({
     type: 'string',
@@ -22,16 +23,10 @@ export class Attachments extends Entity {
   description?: string;
 
   @property({
-    type: 'string',
+    type: 'date',
     required: true,
   })
-  link: string;
-
-  @property({
-    type: 'string',
-    required: true,
-  })
-  caseId: string;
+  time: string;
 
   @property({
     type: 'date',
@@ -50,13 +45,13 @@ export class Attachments extends Entity {
   })
   casesId?: string;
 
-  constructor(data?: Partial<Attachments>) {
+  constructor(data?: Partial<Timelines>) {
     super(data);
   }
 }
 
-export interface AttachmentsRelations {
+export interface TimelinesRelations {
   // describe navigational properties here
 }
 
-export type AttachmentsWithRelations = Attachments & AttachmentsRelations;
+export type TimelinesWithRelations = Timelines & TimelinesRelations;
