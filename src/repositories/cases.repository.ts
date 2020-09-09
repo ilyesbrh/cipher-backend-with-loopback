@@ -1,20 +1,17 @@
-import {DefaultCrudRepository, repository, HasOneRepositoryFactory, HasManyRepositoryFactory} from '@loopback/repository';
-import {Cases, CasesRelations, Contacts, Fees, Tasks, Attachments, Timelines} from '../models';
+import {Getter, inject} from '@loopback/core';
+import {DefaultCrudRepository, HasManyRepositoryFactory, repository} from '@loopback/repository';
 import {PostegressConnectorDataSource} from '../datasources';
-import {inject, Getter} from '@loopback/core';
-import {ContactsRepository} from './contacts.repository';
+import {Attachments, Cases, CasesRelations, Fees, Tasks, Timelines} from '../models';
+import {AttachmentsRepository} from './attachments.repository';
 import {FeesRepository} from './fees.repository';
 import {TasksRepository} from './tasks.repository';
-import {AttachmentsRepository} from './attachments.repository';
 import {TimelinesRepository} from './timelines.repository';
 
 export class CasesRepository extends DefaultCrudRepository<
   Cases,
   typeof Cases.prototype.id,
   CasesRelations
-> {
-
-  public readonly contacts: HasOneRepositoryFactory<Contacts, typeof Cases.prototype.id>;
+  > {
 
   public readonly fees: HasManyRepositoryFactory<Fees, typeof Cases.prototype.id>;
 
@@ -25,7 +22,11 @@ export class CasesRepository extends DefaultCrudRepository<
   public readonly timelines: HasManyRepositoryFactory<Timelines, typeof Cases.prototype.id>;
 
   constructor(
-    @inject('datasources.postegressConnector') dataSource: PostegressConnectorDataSource, @repository.getter('ContactsRepository') protected contactsRepositoryGetter: Getter<ContactsRepository>, @repository.getter('FeesRepository') protected feesRepositoryGetter: Getter<FeesRepository>, @repository.getter('TasksRepository') protected tasksRepositoryGetter: Getter<TasksRepository>, @repository.getter('AttachmentsRepository') protected attachmentsRepositoryGetter: Getter<AttachmentsRepository>, @repository.getter('TimelinesRepository') protected timelinesRepositoryGetter: Getter<TimelinesRepository>,
+    @inject('datasources.postegressConnector') dataSource: PostegressConnectorDataSource,
+    @repository.getter('FeesRepository') protected feesRepositoryGetter: Getter<FeesRepository>,
+    @repository.getter('TasksRepository') protected tasksRepositoryGetter: Getter<TasksRepository>,
+    @repository.getter('AttachmentsRepository') protected attachmentsRepositoryGetter: Getter<AttachmentsRepository>,
+    @repository.getter('TimelinesRepository') protected timelinesRepositoryGetter: Getter<TimelinesRepository>,
   ) {
     super(Cases, dataSource);
     this.timelines = this.createHasManyRepositoryFactoryFor('timelines', timelinesRepositoryGetter,);
@@ -36,7 +37,5 @@ export class CasesRepository extends DefaultCrudRepository<
     this.registerInclusionResolver('tasks', this.tasks.inclusionResolver);
     this.fees = this.createHasManyRepositoryFactoryFor('fees', feesRepositoryGetter,);
     this.registerInclusionResolver('fees', this.fees.inclusionResolver);
-    this.contacts = this.createHasOneRepositoryFactoryFor('contacts', contactsRepositoryGetter);
-    this.registerInclusionResolver('contacts', this.contacts.inclusionResolver);
   }
 }

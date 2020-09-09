@@ -1,8 +1,7 @@
-import {Entity, model, property, hasOne, hasMany} from '@loopback/repository';
-import {Contacts} from './contacts.model';
+import {Entity, hasMany, model, property} from '@loopback/repository';
+import {Attachments} from './attachments.model';
 import {Fees} from './fees.model';
 import {Tasks} from './tasks.model';
-import {Attachments} from './attachments.model';
 import {Timelines} from './timelines.model';
 
 @model()
@@ -23,6 +22,20 @@ export class Cases extends Entity {
 
   @property({
     type: 'string',
+    required: false,
+    default: ''
+  })
+  number?: string;
+
+  @property({
+    type: 'number',
+    required: false,
+    default: 0
+  })
+  price?: number;
+
+  @property({
+    type: 'string',
   })
   description?: string;
 
@@ -31,6 +44,12 @@ export class Cases extends Entity {
     required: true,
   })
   opponent: string;
+
+  @property({
+    type: 'string',
+    required: true,
+  })
+  client: string;
 
   @property({
     type: 'string',
@@ -83,9 +102,6 @@ export class Cases extends Entity {
     default: () => new Date()
   })
   updatedAt?: string;
-
-  @hasOne(() => Contacts)
-  contacts: Contacts;
 
   @hasMany(() => Fees)
   fees: Fees[];

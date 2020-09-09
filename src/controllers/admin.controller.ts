@@ -2,7 +2,7 @@ import {authenticate, TokenService, UserService} from '@loopback/authentication'
 import {authorize} from '@loopback/authorization';
 import {inject} from '@loopback/core';
 import {model, property, repository} from '@loopback/repository';
-import {get, HttpErrors, param, post, requestBody} from '@loopback/rest';
+import {get, getModelSchemaRef, HttpErrors, param, post, requestBody} from '@loopback/rest';
 import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
 import _ from 'lodash';
 import {PasswordHasherBindings, TokenServiceBindings, UserServiceBindings} from '../key';
@@ -10,7 +10,7 @@ import {basicAuthorization} from '../middlewares/auth.midd';
 import {User} from '../models';
 import {Credentials, UserRepository} from '../repositories';
 import {PasswordHasher, validateCredentials} from '../services';
-import {CredentialsRequestBody, Roles, UserProfileSchema} from './specs/user-controller.specs';
+import {CredentialsRequestBody, Roles} from './specs/user-controller.specs';
 
 
 @model()
@@ -34,12 +34,10 @@ export class AdminController {
   }
 
   @authenticate('jwt')
-  @authorize(
-    {
-      allowedRoles: [Roles.ADMIN],
-      voters: [basicAuthorization],
-    }
-  )
+  @authorize({
+    allowedRoles: [Roles.ADMIN],
+    voters: [basicAuthorization],
+  })
   @post('/users/sign-up', {
     responses: {
       '200': {
@@ -54,8 +52,8 @@ export class AdminController {
       },
     },
   })
-  async create(@requestBody(CredentialsRequestBody) newUserRequest: Credentials): Promise<User> {
 
+  async create(@requestBody(CredentialsRequestBody) newUserRequest: Credentials): Promise<User> {
 
     const isRolesValidated = this.validateRoles(newUserRequest.role?.split(','));
 
@@ -92,7 +90,6 @@ export class AdminController {
       }
     }
   }
-
   validateRoles(roles: string[] | undefined): boolean {
 
     console.log(roles);
@@ -129,12 +126,10 @@ export class AdminController {
       },
     },
   })
-  async createAdmin(
-    @requestBody(CredentialsRequestBody)
-    newUserRequest: Credentials,
-  ): Promise<User> {
+  async createAdmin(@requestBody(CredentialsRequestBody) newUserRequest: Credentials): Promise<User> {
     // All new users have the "customer" role by default
-    newUserRequest.role = 'admin';
+    newUserRequest.role = Object.values(Roles).toString();
+
     // ensure a valid email value and password value
     validateCredentials(_.pick(newUserRequest, ['email', 'password']));
 
@@ -164,7 +159,6 @@ export class AdminController {
       }
     }
   }
-
 
   @get('/users/{userId}', {
     responses: {
@@ -197,7 +191,7 @@ export class AdminController {
         description: 'The current user profile',
         content: {
           'application/json': {
-            schema: UserProfileSchema,
+            schema: getModelSchemaRef(User, {includeRelations: false}),
           },
         },
       },

@@ -14,19 +14,7 @@ export class Contacts extends Entity {
     type: 'string',
     required: true,
   })
-  firstName: string;
-
-  @property({
-    type: 'string',
-    required: false,
-  })
-  type: string;
-
-  @property({
-    type: 'string',
-    required: true,
-  })
-  lastName: string;
+  fullName: string;
 
   @property({
     type: 'string',
@@ -62,11 +50,6 @@ export class Contacts extends Entity {
     type: 'string',
   })
   description?: string;
-
-  @property({
-    type: 'string',
-  })
-  casesId?: string;
 
   @property({
     type: 'date',

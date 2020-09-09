@@ -1,8 +1,13 @@
+import {authenticate} from '@loopback/authentication';
+import {authorize} from '@loopback/authorization';
 import {Count, CountSchema, Filter, repository, Where} from '@loopback/repository';
 import {del, get, getModelSchemaRef, getWhereSchemaFor, param, patch, post, requestBody} from '@loopback/rest';
+import {basicAuthorization} from '../middlewares/auth.midd';
 import {Cases, Tasks} from '../models';
 import {CasesRepository} from '../repositories';
+import {Roles} from './specs/user-controller.specs';
 
+@authenticate('jwt')
 export class CasesTasksController {
   constructor(
     @repository(CasesRepository) protected casesRepository: CasesRepository,
@@ -20,6 +25,10 @@ export class CasesTasksController {
       },
     },
   })
+  @authorize({
+    allowedRoles: [Roles.CASE_VIEW],
+    voters: [basicAuthorization],
+  })
   async find(
     @param.path.string('id') id: string,
     @param.query.object('filter') filter?: Filter<Tasks>,
@@ -34,6 +43,10 @@ export class CasesTasksController {
         content: {'application/json': {schema: getModelSchemaRef(Tasks)}},
       },
     },
+  })
+  @authorize({
+    allowedRoles: [Roles.CASE_CREATE],
+    voters: [basicAuthorization],
   })
   async create(
     @param.path.string('id') id: typeof Cases.prototype.id,
@@ -60,6 +73,10 @@ export class CasesTasksController {
       },
     },
   })
+  @authorize({
+    allowedRoles: [Roles.CASE_CREATE],
+    voters: [basicAuthorization],
+  })
   async patch(
     @param.path.string('id') id: string,
     @requestBody({
@@ -82,6 +99,10 @@ export class CasesTasksController {
         content: {'application/json': {schema: CountSchema}},
       },
     },
+  })
+  @authorize({
+    allowedRoles: [Roles.CASE_CREATE],
+    voters: [basicAuthorization],
   })
   async delete(
     @param.path.string('id') id: string,
