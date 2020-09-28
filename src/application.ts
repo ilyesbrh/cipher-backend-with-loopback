@@ -7,13 +7,12 @@ import {RepositoryMixin} from '@loopback/repository';
 import {OpenApiSpec, RestApplication} from '@loopback/rest';
 import {RestExplorerBindings, RestExplorerComponent} from '@loopback/rest-explorer';
 import {ServiceMixin} from '@loopback/service-proxy';
+import multer from 'multer';
 import path from 'path';
-import {PasswordHasherBindings, TokenServiceBindings, TokenServiceConstants} from './key';
+import {FILE_UPLOAD_SERVICE, PasswordHasherBindings, STORAGE_DIRECTORY, TokenServiceBindings, TokenServiceConstants} from './key';
 import {MySequence} from './sequence';
 import {BcryptHasher, JWTService, MyUserService} from './services';
 import {SECURITY_SPEC} from './utils/security-spec';
-
-
 
 export {ApplicationConfig};
 
@@ -33,12 +32,16 @@ export class Cipher extends BootMixin(ServiceMixin(RepositoryMixin(RestApplicati
     });
     this.component(RestExplorerComponent);
 
+    // Configure file upload with multer options
+    this.configureFileUpload(options.fileStorageDirectory);
+
     // Mount authentication system
     this.component(AuthenticationComponent);
     this.component(AuthorizationComponent);
 
     // Mount jwt component
     this.component(JWTAuthenticationComponent);
+
 
     this.add(createBindingFromClass(JWTAuthenticationStrategy));
     registerAuthenticationStrategy(this, JWTAuthenticationStrategy);
@@ -65,6 +68,23 @@ export class Cipher extends BootMixin(ServiceMixin(RepositoryMixin(RestApplicati
       security: SECURITY_SPEC,
     };
     this.api(spec);
+  }
+
+  protected configureFileUpload(destination?: string) {
+    // Upload files to `dist/.sandbox` by default
+    destination = destination ?? path.join(__dirname, '../.attachments');
+    this.bind(STORAGE_DIRECTORY).to(destination);
+    const multerOptions: multer.Options = {
+      storage: multer.diskStorage({
+        destination,
+        // Use the original file name as is
+        filename: (req, file, cb) => {
+          cb(null, file.originalname);
+        },
+      }),
+    };
+    // Configure the file upload service with multer options
+    this.configure(FILE_UPLOAD_SERVICE).to(multerOptions);
   }
 
   private setUpBindings(): void {

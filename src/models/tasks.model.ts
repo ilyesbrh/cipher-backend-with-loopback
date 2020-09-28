@@ -18,7 +18,7 @@ export class Tasks extends Entity {
 
   @property({
     type: 'string',
-    required: true,
+    required: false,
   })
   description: string;
 
@@ -35,22 +35,34 @@ export class Tasks extends Entity {
   isDone?: boolean;
 
   @property({
-    type: 'date',
-    required: true,
+    type: "date",
+    postgresql: {
+      dataType: 'TIMESTAMP',
+    },
+    required: false,
+    default: () => new Date().getTime()
   })
-  deadline: string;
+  deadline: number;
 
   @property({
-    type: 'date',
-    default: () => new Date()
+    type: "date",
+    postgresql: {
+      dataType: 'TIMESTAMP',
+    },
+    required: false,
+    default: () => new Date().getTime()
   })
-  createdAt?: string;
+  createdAt?: number;
 
   @property({
-    type: 'date',
-    default: () => new Date()
+    type: "date",
+    postgresql: {
+      dataType: 'TIMESTAMP',
+    },
+    required: false,
+    default: () => new Date().getTime()
   })
-  updatedAt?: string;
+  updatedAt?: number;
 
   @property({
     type: 'string',

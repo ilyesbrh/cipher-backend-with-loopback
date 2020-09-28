@@ -1,9 +1,22 @@
 import {TokenService, UserService} from '@loopback/authentication';
 import {BindingKey} from '@loopback/context';
 import {UserProfile} from '@loopback/security';
+import {RequestHandler} from 'express-serve-static-core';
 import {User} from './models';
 import {Credentials} from './repositories';
 import {PasswordHasher} from './services';
+
+/**
+ * Binding key for the file upload service
+ */
+export const FILE_UPLOAD_SERVICE = BindingKey.create<RequestHandler>(
+  'services.FileUpload',
+);
+
+/**
+ * Binding key for the storage directory
+ */
+export const STORAGE_DIRECTORY = BindingKey.create<string>('storage.directory');
 
 export namespace TokenServiceConstants {
   export const TOKEN_SECRET_VALUE = 'secret ilies bourouh :3';

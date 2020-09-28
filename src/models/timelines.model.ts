@@ -29,16 +29,24 @@ export class Timelines extends Entity {
   time: string;
 
   @property({
-    type: 'date',
-    default: () => new Date()
+    type: "date",
+    postgresql: {
+      dataType: 'TIMESTAMP',
+    },
+    required: false,
+    default: () => new Date().getTime()
   })
-  createdAt?: string;
+  createdAt?: number;
 
   @property({
-    type: 'date',
-    default: () => new Date()
+    type: "date",
+    postgresql: {
+      dataType: 'TIMESTAMP',
+    },
+    required: false,
+    default: () => new Date().getTime()
   })
-  updatedAt?: string;
+  updatedAt?: number;
 
   @property({
     type: 'string',

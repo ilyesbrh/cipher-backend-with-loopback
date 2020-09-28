@@ -52,8 +52,7 @@ export class Cases extends Entity {
   client: string;
 
   @property({
-    type: 'string',
-    required: true,
+    type: 'string'
   })
   tags: string;
 
@@ -92,16 +91,24 @@ export class Cases extends Entity {
   totalDetes?: number;
 
   @property({
-    type: 'date',
-    default: () => new Date()
+    type: "date",
+    postgresql: {
+      dataType: 'TIMESTAMP',
+    },
+    required: false,
+    default: () => new Date().getTime()
   })
-  createdAt?: string;
+  createdAt?: number;
 
   @property({
-    type: 'date',
-    default: () => new Date()
+    type: "date",
+    postgresql: {
+      dataType: 'TIMESTAMP',
+    },
+    required: false,
+    default: () => new Date().getTime()
   })
-  updatedAt?: string;
+  updatedAt?: number;
 
   @hasMany(() => Fees)
   fees: Fees[];

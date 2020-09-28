@@ -4,17 +4,21 @@ import {
   Filter,
   FilterExcludingWhere,
   repository,
-  Where,
+  Where
 } from '@loopback/repository';
 import {
-  post,
-  param,
-  get,
-  getModelSchemaRef,
-  patch,
+  del, get,
+  getModelSchemaRef, param,
+
+
+  patch, post,
+
+
+
+
   put,
-  del,
-  requestBody,
+
+  requestBody
 } from '@loopback/rest';
 import {Contacts} from '../models';
 import {ContactsRepository} from '../repositories';
@@ -22,7 +26,7 @@ import {ContactsRepository} from '../repositories';
 export class ContactsController {
   constructor(
     @repository(ContactsRepository)
-    public contactsRepository : ContactsRepository,
+    public contactsRepository: ContactsRepository,
   ) {}
 
   @post('/contacts', {
@@ -39,7 +43,7 @@ export class ContactsController {
         'application/json': {
           schema: getModelSchemaRef(Contacts, {
             title: 'NewContacts',
-            
+
           }),
         },
       },

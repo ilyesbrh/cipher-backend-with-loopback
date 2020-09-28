@@ -52,16 +52,24 @@ export class Contacts extends Entity {
   description?: string;
 
   @property({
-    type: 'date',
-    default: () => new Date()
+    type: "date",
+    postgresql: {
+      dataType: 'TIMESTAMP',
+    },
+    required: false,
+    default: () => new Date().getTime()
   })
-  createdAt?: string;
+  createdAt?: number;
 
   @property({
-    type: 'date',
-    default: () => new Date()
+    type: "date",
+    postgresql: {
+      dataType: 'TIMESTAMP',
+    },
+    required: false,
+    default: () => new Date().getTime()
   })
-  updatedAt?: string;
+  updatedAt?: number;
 
   constructor(data?: Partial<Contacts>) {
     super(data);
