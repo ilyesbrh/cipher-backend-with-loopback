@@ -91,9 +91,9 @@ export class Cases extends Entity {
   totalDetes?: number;
 
   @property({
-    type: "date",
+    type: "number",
     postgresql: {
-      dataType: 'TIMESTAMP',
+      dataType: 'BIGINT',
     },
     required: false,
     default: () => new Date().getTime()
@@ -101,9 +101,9 @@ export class Cases extends Entity {
   createdAt?: number;
 
   @property({
-    type: "date",
+    type: "number",
     postgresql: {
-      dataType: 'TIMESTAMP',
+      dataType: 'BIGINT',
     },
     required: false,
     default: () => new Date().getTime()

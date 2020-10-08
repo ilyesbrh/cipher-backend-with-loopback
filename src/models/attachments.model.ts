@@ -28,15 +28,18 @@ export class Attachments extends Entity {
   link: string;
 
   @property({
-    type: 'date',
+    type: 'number',
+    postgresql: {
+      dataType: 'BIGINT',
+    },
     default: () => new Date().getTime()
   })
   createdAt?: number;
 
   @property({
-    type: "date",
+    type: "number",
     postgresql: {
-      dataType: 'TIMESTAMP',
+      dataType: 'BIGINT',
     },
     required: false,
     default: () => new Date().getTime()

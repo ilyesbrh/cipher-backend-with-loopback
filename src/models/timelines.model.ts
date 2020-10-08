@@ -29,9 +29,9 @@ export class Timelines extends Entity {
   time: string;
 
   @property({
-    type: "date",
+    type: "number",
     postgresql: {
-      dataType: 'TIMESTAMP',
+      dataType: 'BIGINT',
     },
     required: false,
     default: () => new Date().getTime()
@@ -39,9 +39,9 @@ export class Timelines extends Entity {
   createdAt?: number;
 
   @property({
-    type: "date",
+    type: "number",
     postgresql: {
-      dataType: 'TIMESTAMP',
+      dataType: 'BIGINT',
     },
     required: false,
     default: () => new Date().getTime()

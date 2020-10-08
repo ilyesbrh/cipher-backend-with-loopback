@@ -23,9 +23,9 @@ export class Fees extends Entity {
   isReceived?: boolean;
 
   @property({
-    type: "date",
+    type: "number",
     postgresql: {
-      dataType: 'TIMESTAMP',
+      dataType: 'BIGINT',
     },
     required: false,
     default: () => new Date().getTime()
@@ -33,9 +33,9 @@ export class Fees extends Entity {
   createdAt?: number;
 
   @property({
-    type: "date",
+    type: "number",
     postgresql: {
-      dataType: 'TIMESTAMP',
+      dataType: 'BIGINT',
     },
     required: false,
     default: () => new Date().getTime()

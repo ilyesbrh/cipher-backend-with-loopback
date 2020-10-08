@@ -52,9 +52,9 @@ export class Contacts extends Entity {
   description?: string;
 
   @property({
-    type: "date",
+    type: "number",
     postgresql: {
-      dataType: 'TIMESTAMP',
+      dataType: 'BIGINT',
     },
     required: false,
     default: () => new Date().getTime()
@@ -62,9 +62,9 @@ export class Contacts extends Entity {
   createdAt?: number;
 
   @property({
-    type: "date",
+    type: "number",
     postgresql: {
-      dataType: 'TIMESTAMP',
+      dataType: 'BIGINT',
     },
     required: false,
     default: () => new Date().getTime()
