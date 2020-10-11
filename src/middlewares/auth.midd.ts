@@ -8,6 +8,8 @@ export async function basicAuthorization(authorizationCtx: AuthorizationContext,
   // No access if authorization details are missing
   let currentUser: UserProfile;
 
+
+
   if (authorizationCtx.principals.length > 0) {
     const user = _.pick(authorizationCtx.principals[0], [
       'id',
@@ -20,12 +22,19 @@ export async function basicAuthorization(authorizationCtx: AuthorizationContext,
     return AuthorizationDecision.DENY;
   }
 
+
   if (!currentUser.role) {
+
+    console.log('[NO ROLES]');
+
     return AuthorizationDecision.DENY;
   }
 
   // Authorize everything that does not have a allowedRoles property
   if (!metadata.allowedRoles) {
+
+    console.log('[NO VALIDATION ROLES]');
+
     return AuthorizationDecision.ALLOW;
   }
 
@@ -41,7 +50,6 @@ export async function basicAuthorization(authorizationCtx: AuthorizationContext,
       roleIsAllowed = true;
     }
   });
-
 
   if (!roleIsAllowed) {
     return AuthorizationDecision.DENY;

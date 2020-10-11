@@ -56,8 +56,7 @@ export class CasesTimelinesController {
         'application/json': {
           schema: getModelSchemaRef(Timelines, {
             title: 'NewTimelinesInCases',
-            exclude: ['id'],
-            optional: ['casesId']
+            exclude: ['id', 'casesId'],
           }),
         },
       },

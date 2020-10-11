@@ -18,15 +18,27 @@ export class Timelines extends Entity {
   title: string;
 
   @property({
+    type: 'boolean',
+    required: false,
+    default: () => true
+  })
+  /* true is left side , wa 3akso sahih xD */
+  side?: boolean;
+
+  @property({
     type: 'string',
   })
   description?: string;
 
   @property({
-    type: 'date',
-    required: true,
+    type: "number",
+    postgresql: {
+      dataType: 'BIGINT',
+    },
+    required: false,
+    default: () => new Date().getTime()
   })
-  time: string;
+  time: number;
 
   @property({
     type: "number",

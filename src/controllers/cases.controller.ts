@@ -39,6 +39,9 @@ export class CasesController {
     })
     cases: Cases,
   ): Promise<Cases> {
+
+    cases.totalDetes = cases.price;
+
     return this.casesRepository.create(cases);
   }
 

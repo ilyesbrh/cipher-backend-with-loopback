@@ -1,13 +1,13 @@
 import {authenticate} from '@loopback/authentication';
 import {authorize} from '@loopback/authorization';
 import {Count, CountSchema, Filter, repository, Where} from '@loopback/repository';
-import {del, get, getModelSchemaRef, getWhereSchemaFor, param, patch, post, requestBody} from '@loopback/rest';
+import {del, get, getModelSchemaRef, getWhereSchemaFor, HttpErrors, param, patch, post, requestBody} from '@loopback/rest';
 import {basicAuthorization} from '../middlewares/auth.midd';
 import {Cases, Fees} from '../models';
 import {CasesRepository} from '../repositories';
 import {Roles} from './specs/user-controller.specs';
 
-authenticate('jwt')
+@authenticate('jwt')
 export class CasesFeesController {
   constructor(
     @repository(CasesRepository) protected casesRepository: CasesRepository,
@@ -27,7 +27,7 @@ export class CasesFeesController {
     },
   })
   @authorize({
-    allowedRoles: [Roles.CASE_VIEW],
+    allowedRoles: [Roles.FEES_VIEW],
     voters: [basicAuthorization],
   })
   async find(
@@ -46,7 +46,7 @@ export class CasesFeesController {
     },
   })
   @authorize({
-    allowedRoles: [Roles.CASE_CREATE],
+    allowedRoles: [Roles.FEES_CREATE],
     voters: [basicAuthorization],
   })
   async create(
@@ -56,14 +56,25 @@ export class CasesFeesController {
         'application/json': {
           schema: getModelSchemaRef(Fees, {
             title: 'NewFeesInCases',
-            exclude: ['id'],
-            optional: ['casesId']
+            exclude: ['id', 'casesId', 'isReceived', 'createdAt', 'updatedAt']
           }),
         },
       },
     }) fees: Omit<Fees, 'id'>,
   ): Promise<Fees> {
-    return this.casesRepository.fees(id).create(fees);
+
+    try {
+      const c = await this.casesRepository.findOne({where: {id}}) as Cases;
+
+      c.totalDetes -= fees.amount;
+      await this.casesRepository.update(c);
+
+      fees.isReceived = false;
+      return await this.casesRepository.fees(id).create(fees);
+
+    } catch (error) {
+      throw new HttpErrors[404]('something wrong happens');
+    }
   }
 
   @patch('/cases/{id}/fees', {
@@ -90,7 +101,25 @@ export class CasesFeesController {
     fees: Partial<Fees>,
     @param.query.object('where', getWhereSchemaFor(Fees)) where?: Where<Fees>,
   ): Promise<Count> {
-    return this.casesRepository.fees(id).patch(fees, where);
+
+    try {
+      const c = await this.casesRepository.findOne({where: {id}}) as Cases;
+      const f = await this.casesRepository.fees(id).find({where});
+
+      c.totalDetes += f[0].amount;
+
+      c.totalDetes -= fees.amount ? fees.amount : 0;
+
+
+      await this.casesRepository.update(c);
+
+      fees.isReceived = false;
+
+      return await this.casesRepository.fees(id).patch(fees, where);
+
+    } catch (error) {
+      throw new HttpErrors[404]('something wrong happens');
+    }
   }
 
   @del('/cases/{id}/fees', {
@@ -109,6 +138,21 @@ export class CasesFeesController {
     @param.path.string('id') id: string,
     @param.query.object('where', getWhereSchemaFor(Fees)) where?: Where<Fees>,
   ): Promise<Count> {
-    return this.casesRepository.fees(id).delete(where);
+
+    try {
+      const c = await this.casesRepository.findOne({where: {id}}) as Cases;
+      const f = await this.casesRepository.fees(id).find({where});
+
+      c.totalDetes += f[0].amount;
+
+      await this.casesRepository.update(c);
+
+      return await this.casesRepository.fees(id).delete(where);
+
+    } catch (error) {
+      throw new HttpErrors[404]('something wrong happens');
+    }
+
+
   }
 }

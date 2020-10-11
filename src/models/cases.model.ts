@@ -32,7 +32,7 @@ export class Cases extends Entity {
     required: false,
     default: 0
   })
-  price?: number;
+  price: number;
 
   @property({
     type: 'string',
@@ -88,7 +88,7 @@ export class Cases extends Entity {
     type: 'number',
     default: 0,
   })
-  totalDetes?: number;
+  totalDetes: number;
 
   @property({
     type: "number",
