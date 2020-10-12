@@ -18,5 +18,6 @@ export class UserCredentialsRepository extends DefaultCrudRepository<
     super(UserCredentials, dataSource);
     this.user = this.createBelongsToAccessorFor('user', userRepositoryGetter,);
     this.registerInclusionResolver('user', this.user.inclusionResolver);
+
   }
 }

@@ -17,6 +17,15 @@ export declare const StatsSchema: {
     TotalPayed: {
       type: number;
     };
+    TotalCases: {
+      type: number;
+    };
+    TotalActive: {
+      type: number;
+    };
+    TotalArchive: {
+      type: number;
+    }
   };
 };
 
@@ -40,22 +49,27 @@ export class FeesController {
   })
   async count(
     @param.where(Fees) where?: Where<Fees>,
-  ): Promise<{totalDetes: number, totalPrices: number, totalPayed: number}> {
-    const result = await this.casesRepository.execute('SELECT  sum(price) as price, sum(totaldetes) as debts FROM public.cases;');
+  ): Promise<Object> {
 
-    const price = parseInt(result[0].price);
-    const debt = parseInt(result[0].debts);
+    const fees = await this.casesRepository.execute('SELECT  sum(price) as price, sum(totaldetes) as debts FROM public.cases');
+    const allCases = await this.casesRepository.execute('SELECT count(id) as totalCases from public.cases');
+    const activeCases = await this.casesRepository.execute("SELECT count(id) as totalActive from public.cases  where public.cases.state = 'Active'");
 
-    console.log({
-      totalDetes: debt,
-      totalPrices: price,
-      totalPayed: price - debt
-    });
+    console.log(allCases);
+    console.log(activeCases);
+
+    const price = parseInt(fees[0].price);
+    const debt = parseInt(fees[0].debts);
+    const cases = parseInt(allCases[0].totalcases);
+    const active = parseInt(activeCases[0].totalactive);
 
     return {
       totalDetes: debt,
       totalPrices: price,
-      totalPayed: price - debt
+      totalPayed: price - debt,
+      totalCases: cases,
+      totalActive: active,
+      totalArchived: cases - active
     };
 
   }

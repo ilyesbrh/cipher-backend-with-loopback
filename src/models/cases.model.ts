@@ -80,9 +80,13 @@ export class Cases extends Entity {
   Jugement?: string;
 
   @property({
-    type: 'date',
+    type: "number",
+    postgresql: {
+      dataType: 'BIGINT',
+    },
+    required: false
   })
-  JugementDate?: string;
+  JugementDate?: Number;
 
   @property({
     type: 'number',

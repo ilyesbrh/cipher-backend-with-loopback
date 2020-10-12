@@ -37,5 +37,13 @@ export class CasesRepository extends DefaultCrudRepository<
     this.registerInclusionResolver('tasks', this.tasks.inclusionResolver);
     this.fees = this.createHasManyRepositoryFactoryFor('fees', feesRepositoryGetter,);
     this.registerInclusionResolver('fees', this.fees.inclusionResolver);
+
+    /* this line when you add it you can update 'updatedAt' on every time data changes */
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (this.modelClass as any).observe('persist', async (ctx: any) => {
+      ctx.data.updatedAt = new Date().getTime();
+    });
+
   }
 }
