@@ -3,13 +3,14 @@ import {authenticate} from '@loopback/authentication';
 import {authorize} from '@loopback/authorization';
 import {inject} from '@loopback/core';
 import {Count, CountSchema, Filter, repository, Where} from '@loopback/repository';
-import {del, get, getModelSchemaRef, getWhereSchemaFor, param, patch, post, Request, requestBody, Response, RestBindings} from '@loopback/rest';
+import {del, get, getModelSchemaRef, getWhereSchemaFor, HttpErrors, oas, param, post, Request, requestBody, Response, RestBindings} from '@loopback/rest';
 import {FILE_UPLOAD_SERVICE} from '../key';
 import {basicAuthorization} from '../middlewares/auth.midd';
 import {Attachments, Cases} from '../models';
 import {CasesRepository} from '../repositories';
 import {FileUploadHandler} from '../types';
 import {Roles} from './specs/user-controller.specs';
+import path from 'path';
 
 
 @authenticate('jwt')
@@ -54,6 +55,34 @@ export class CasesAttachmentsController {
     return this.casesRepository.attachments(id).create(attachment);
   }
 
+  /* DOWNLOAD FILE */
+  @authorize({
+    allowedRoles: [Roles.CASE_VIEW],
+    voters: [basicAuthorization],
+  })
+  @get('/files/{filename}')
+  @oas.response.file()
+  downloadFile(
+    @param.path.string('filename') fileName: string,
+    @inject(RestBindings.Http.RESPONSE) response: Response,
+  ) {
+    const file = this.validateFileName(fileName);
+    response.download(file, fileName);
+    return response;
+  }
+
+  /**
+   * Validate file names to prevent them goes beyond the designated directory
+   * @param fileName - File name
+   */
+  private validateFileName(fileName: string) {
+    const storageDirectory = path.join(__dirname, '../../.attachments');
+    const resolved = path.resolve(storageDirectory, fileName);
+    if (resolved.startsWith(storageDirectory)) return resolved;
+    // The resolved file is outside sandbox
+    throw new HttpErrors.BadRequest(`Invalid file name: ${fileName}`);
+  }
+
   @get('/cases/{id}/attachments', {
     responses: {
       '200': {
@@ -77,32 +106,33 @@ export class CasesAttachmentsController {
     return this.casesRepository.attachments(id).find(filter);
   }
 
-  @patch('/cases/{id}/attachments', {
-    responses: {
-      '200': {
-        description: 'Cases.Attachments PATCH success count',
-        content: {'application/json': {schema: CountSchema}},
-      },
-    },
-  })
-  @authorize({
-    allowedRoles: [Roles.CASE_CREATE],
-    voters: [basicAuthorization],
-  })
-  async patch(
-    @param.path.string('id') id: string,
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(Attachments, {partial: true}),
+  /*
+    @patch('/cases/{id}/attachments', {
+      responses: {
+        '200': {
+          description: 'Cases.Attachments PATCH success count',
+          content: {'application/json': {schema: CountSchema}},
         },
       },
     })
-    attachments: Partial<Attachments>,
-    @param.query.object('where', getWhereSchemaFor(Attachments)) where?: Where<Attachments>,
-  ): Promise<Count> {
-    return this.casesRepository.attachments(id).patch(attachments, where);
-  }
+    @authorize({
+      allowedRoles: [Roles.CASE_CREATE],
+      voters: [basicAuthorization],
+    })
+    async patch(
+      @param.path.string('id') id: string,
+      @requestBody({
+        content: {
+          'application/json': {
+            schema: getModelSchemaRef(Attachments, {partial: true}),
+          },
+        },
+      })
+      attachments: Partial<Attachments>,
+      @param.query.object('where', getWhereSchemaFor(Attachments)) where?: Where<Attachments>,
+    ): Promise<Count> {
+      return this.casesRepository.attachments(id).patch(attachments, where);
+    } */
 
   @del('/cases/{id}/attachments', {
     responses: {
