@@ -11,7 +11,7 @@ import {Roles} from './specs/user-controller.specs';
 export class CasesFeesController {
   constructor(
     @repository(CasesRepository) protected casesRepository: CasesRepository,
-  ) {}
+  ) { }
 
 
   @get('/cases/{id}/fees', {
@@ -143,7 +143,7 @@ export class CasesFeesController {
       const c = await this.casesRepository.findOne({where: {id}}) as Cases;
       const f = await this.casesRepository.fees(id).find({where});
 
-      c.totalDetes += f[0].amount;
+      c.totalDetes += f[0] ? f[0].amount : 0;
 
       await this.casesRepository.update(c);
 

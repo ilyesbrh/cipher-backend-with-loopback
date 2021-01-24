@@ -6,7 +6,7 @@ export enum Roles {
   FEES_VIEW = 'view fees',
   BOARD_VIEW = 'view board',
   STATS_VIEW = 'view fees stats',
-  ADMIN = "admin",
+  ADMIN = 'admin',
 }
 
 export const UserProfileSchema = {

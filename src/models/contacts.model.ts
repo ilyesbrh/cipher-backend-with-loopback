@@ -39,6 +39,11 @@ export class Contacts extends Entity {
   @property({
     type: 'string',
   })
+  role?: string;
+
+  @property({
+    type: 'string',
+  })
   address?: string;
 
   @property({

@@ -53,7 +53,47 @@ export class AdminController {
     },
   })
 
-  async create(@requestBody(CredentialsRequestBody) newUserRequest: Credentials): Promise<User> {
+  async create(
+    @requestBody(
+      {
+        description: 'The input of sign up user function',
+        required: true,
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              required: ['email', 'password'],
+
+              properties: {
+                email: {
+                  type: 'string',
+                  format: 'email',
+                },
+                password: {
+                  type: 'string',
+                  minLength: 8,
+                },
+                role: {
+                  type: "string"
+                },
+                phone: {
+                  type: "string"
+                },
+                fullName: {
+                  type: "string"
+                },
+              },
+            }
+          },
+        },
+      }
+    ) newUserRequest: {
+      email: string;
+      password: string;
+      fullName: string;
+      phone: string;
+      role?: string;
+    }): Promise<User> {
 
     const isRolesValidated = this.validateRoles(newUserRequest.role?.split(','));
 
